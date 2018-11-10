@@ -61,29 +61,6 @@ function writeNewPost(uid, username, picture, title, body) {
 // [END write_fan_out]
 
 /**
- * Star/unstar post.
- */
-// [START post_stars_transaction]
-function toggleStar(postRef, uid) {
-  postRef.transaction(function(post) {
-    if (post) {
-      if (post.stars && post.stars[uid]) {
-        post.starCount--;
-        post.stars[uid] = null;
-      } else {
-        post.starCount++;
-        if (!post.stars) {
-          post.stars = {};
-        }
-        post.stars[uid] = true;
-      }
-    }
-    return post;
-  });
-}
-// [END post_stars_transaction]
-
-/**
  * Creates a post element.
  */
 function createPostElement(postId, title, text, author, authorId, authorPic) {
@@ -140,16 +117,13 @@ function createPostElement(postId, title, text, author, authorId, authorPic) {
 
   // Listen for comments.
   // [START child_event_listener_recycler]
-  var commentsRef = firebase.database().ref('post-comments/' + postId);
-  commentsRef.on('child_added', function(data) {
+  var commentsRef = firebase.database().ref('post-comments/' );
+  commentsRef.on('value', function(data) {
     var d = new Date()
     console.log("New comment add event received "+d+" "+d.getMilliseconds())
     addCommentElement(postElement, data.key, data.val().text, data.val().author);
   });
 
-  commentsRef.on('child_changed', function(data) {
-    setCommentValues(postElement, data.key, data.val().text, data.val().author);
-  });
 
   // Create new comment.
   addCommentForm.onsubmit = function(e) {
@@ -169,10 +143,8 @@ function createNewComment(postId, username, uid, text) {
   var d = new Date()
   console.log("New comment post time : "+d+" "+d.getMilliseconds())
 
-  firebase.database().ref('post-comments/' + postId).push({
+  firebase.database().ref('post-comments/' ).set({
     text: text,
-    author: username,
-    uid: uid
   });
 }
 
