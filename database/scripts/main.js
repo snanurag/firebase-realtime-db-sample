@@ -142,36 +142,14 @@ function createPostElement(postId, title, text, author, authorId, authorPic) {
   // [START child_event_listener_recycler]
   var commentsRef = firebase.database().ref('post-comments/' + postId);
   commentsRef.on('child_added', function(data) {
+    var d = new Date()
+    console.log("New comment add event received "+d+" "+d.getMilliseconds())
     addCommentElement(postElement, data.key, data.val().text, data.val().author);
   });
 
   commentsRef.on('child_changed', function(data) {
     setCommentValues(postElement, data.key, data.val().text, data.val().author);
   });
-
-  commentsRef.on('child_removed', function(data) {
-    deleteComment(postElement, data.key);
-  });
-  // [END child_event_listener_recycler]
-
-  // Listen for likes counts.
-  // [START post_value_event_listener]
-  var starCountRef = firebase.database().ref('posts/' + postId + '/starCount');
-  starCountRef.on('value', function(snapshot) {
-    updateStarCount(postElement, snapshot.val());
-  });
-  // [END post_value_event_listener]
-
-  // Listen for the starred status.
-  var starredStatusRef = firebase.database().ref('posts/' + postId + '/stars/' + uid);
-  starredStatusRef.on('value', function(snapshot) {
-    updateStarredByCurrentUser(postElement, snapshot.val());
-  });
-
-  // Keep track of all Firebase reference on which we are listening.
-  listeningFirebaseRefs.push(commentsRef);
-  listeningFirebaseRefs.push(starCountRef);
-  listeningFirebaseRefs.push(starredStatusRef);
 
   // Create new comment.
   addCommentForm.onsubmit = function(e) {
@@ -181,16 +159,6 @@ function createPostElement(postId, title, text, author, authorId, authorPic) {
     commentInput.parentElement.MaterialTextfield.boundUpdateClassesHandler();
   };
 
-  // Bind starring action.
-  var onStarClicked = function() {
-    var globalPostRef = firebase.database().ref('/posts/' + postId);
-    var userPostRef = firebase.database().ref('/user-posts/' + authorId + '/' + postId);
-    toggleStar(globalPostRef, uid);
-    toggleStar(userPostRef, uid);
-  };
-  unStar.onclick = onStarClicked;
-  star.onclick = onStarClicked;
-
   return postElement;
 }
 
@@ -198,31 +166,14 @@ function createPostElement(postId, title, text, author, authorId, authorPic) {
  * Writes a new comment for the given post.
  */
 function createNewComment(postId, username, uid, text) {
+  var d = new Date()
+  console.log("New comment post time : "+d+" "+d.getMilliseconds())
+
   firebase.database().ref('post-comments/' + postId).push({
     text: text,
     author: username,
     uid: uid
   });
-}
-
-/**
- * Updates the starred status of the post.
- */
-function updateStarredByCurrentUser(postElement, starred) {
-  if (starred) {
-    postElement.getElementsByClassName('starred')[0].style.display = 'inline-block';
-    postElement.getElementsByClassName('not-starred')[0].style.display = 'none';
-  } else {
-    postElement.getElementsByClassName('starred')[0].style.display = 'none';
-    postElement.getElementsByClassName('not-starred')[0].style.display = 'inline-block';
-  }
-}
-
-/**
- * Updates the number of stars displayed for a post.
- */
-function updateStarCount(postElement, nbStart) {
-  postElement.getElementsByClassName('star-count')[0].innerText = nbStart;
 }
 
 /**
