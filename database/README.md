@@ -19,6 +19,8 @@ Getting Started
  1. On the command line run `firebase use --add` and select the Firebase project you have created.
  1. On the command line run `firebase serve` using the Firebase CLI tool to launch a local server.
 
+Note : Open 2 webapps in 2 different tabs and check the Chrome Developer tool console for post and receive messages of Post comment. It will tell the time difference between post and receive of event.
+
 Support
 -------
 
