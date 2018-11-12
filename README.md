@@ -1,9 +1,7 @@
 Firebase Realtime Database Quickstart
 =============================
 
-The Firebase Database quickstart demonstrates how to connect to the Firebase Realtime Database and
-to send and retrieve data through a simple social blogging app. It will interoperate with the iOS and
-Android database quickstarts.
+This small web-app will demo a short code for post and receive data. It also demostrates the network disconnect and re-connect effects. Using 2 different windows, time difference between post and receive and re-connect can be calculated through console logs.
 
 Introduction
 ------------
@@ -29,4 +27,4 @@ Support
 License
 -------
 
-© Google, 2016. Licensed under an [Apache-2](../LICENSE) license.
+© Anurag, 2018. Licensed under an [Apache-2](../LICENSE) license.
